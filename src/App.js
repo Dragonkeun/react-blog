@@ -2,94 +2,135 @@ import "./App.css";
 import { useState } from "react";
 
 function App() {
-  let [글제목, 글제목변경] = useState([
+  let [postTitle, setPostTitle] = useState([
     "아스날 리그 우승",
-    "우리동네 우동 맛집",
-    "새로운 블로그를 만들자",
+    "동물원에서 탈출한 호랑이",
+    "공부는 재미가 없다",
   ]);
-  let [따봉, 따봉변경] = useState(0);
+  let [tabom, setTabom] = useState([0, 0, 0]);
   let [modal, setModal] = useState(false);
+  let [title, setTitle] = useState(0);
+  let [inputValue, setInputValue] = useState("");
 
   return (
     <div className="App">
       <div className="black-nav">
         <h4 style={{ color: "cornflowerblue", fontSize: "20px" }}>blog</h4>
       </div>
-      <button
-        onClick={() => {
-          let copy1 = [...글제목];
-          copy1[0] = "글 제목 변경하기";
-          글제목변경(copy1);
-        }}
-      >
-        글 수정
-      </button>
-      <button
-        onClick={() => {
-          let copy2 = [...글제목];
-          copy2.sort();
-          글제목변경(copy2);
-        }}
-      >
-        가나다순 정렬
-      </button>
-      <div className="list">
-        <h4
-          onClick={() => {
-            modal ? setModal(false) : setModal(true);
-          }}
-        >
-          {글제목[0]}
-          <span
+      <div className="nav">
+        <div className="post-wrapper">
+          <input
+            className="post-input"
+            type="text"
+            placeholder="글 제목을 작성하세요"
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
+          />
+          <input
+            className="post-input-button"
+            type="button"
+            value="글 작성"
             onClick={() => {
-              따봉변경(따봉 + 1);
+              let copyPostTitle3 = [...postTitle];
+              copyPostTitle3.unshift(inputValue);
+              setPostTitle(copyPostTitle3);
+              let copyTabom = [...tabom];
+              copyTabom.unshift(0);
+              setTabom(copyTabom);
+            }}
+          />
+        </div>
+        <div className="nav-right">
+          <button
+            className="post-edit-button"
+            onClick={() => {
+              let copyPostTitle = [...postTitle];
+              copyPostTitle[0] = "글 제목 변경하기";
+              setPostTitle(copyPostTitle);
             }}
           >
-            ❤️
-          </span>
-          {따봉}
-        </h4>
-        <p>3월 1일 발행</p>
-      </div>
-      <div className="list">
-        <h4>
-          {글제목[1]}
-          <span
+            글 수정
+          </button>
+          <button
+            className="post-sort-button"
             onClick={() => {
-              따봉변경(따봉 + 1);
+              let copyPostTitle2 = [...postTitle];
+              copyPostTitle2.sort();
+              setPostTitle(copyPostTitle2);
             }}
           >
-            ❤️
-          </span>
-          {따봉}
-        </h4>
-        <p>3월 1일 발행</p>
+            정렬
+          </button>
+        </div>
       </div>
-      <div className="list">
-        <h4>
-          {글제목[2]}
-          <span
-            onClick={() => {
-              따봉변경(따봉 + 1);
-            }}
-          >
-            ❤️
-          </span>
-          {따봉}
-        </h4>
-        <p>3월 1일 발행</p>
-      </div>
-      {modal ? <Modal /> : null}
+      {postTitle.map((a, i) => {
+        return (
+          <div className="list">
+            <h4
+              onClick={() => {
+                setTitle(i);
+                modal ? setModal(false) : setModal(true);
+              }}
+            >
+              {postTitle[i]}
+              <div className="tabom-button">
+                <span
+                  className="tabom-button-icon"
+                  onClick={() => {
+                    let copyTabom = [...tabom];
+                    copyTabom[i] = copyTabom[i] + 1;
+                    setTabom(copyTabom);
+                  }}
+                >
+                  ❤️
+                </span>
+                {tabom[i]}
+              </div>
+            </h4>
+            <p>{Date()}</p>
+            <button
+              className="delete-button"
+              onClick={() => {
+                let copy = [...postTitle];
+                copy.splice(i, 1);
+                setPostTitle(copy);
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        );
+      })}
+
+      {modal ? (
+        <Modal
+          postTitle={postTitle}
+          setPostTitle={setPostTitle}
+          title={title}
+        />
+      ) : null}
     </div>
   );
 }
 
-function Modal() {
+function Modal(props) {
   return (
     <div className="modal">
-      <h4>제목</h4>
+      <h4>{props.postTitle[props.title]}</h4>
       <p>날짜</p>
       <p>상세내용</p>
+      <button
+        onClick={() => {
+          props.setPostTitle([
+            "여자 코트 추천",
+            "강아지 옷 추천",
+            "오늘 할 일 추천",
+          ]);
+        }}
+      >
+        글 수정
+      </button>
     </div>
   );
 }
